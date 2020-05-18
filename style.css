@@ -1,3 +1,5 @@
+/* LAYOUT */
+
 body {
   background-color: #dedede;
   color: #232323;
@@ -12,9 +14,13 @@ article, header {
 
 article {
   background-color: #efefef;
-  padding: 1em;
+  padding: 1em 1em 0 1em;
   border-top: 0.4em solid #232323;
   border-bottom: 0.4em solid #232323;
+}
+
+section{
+  margin-bottom: 1em;
 }
 
 .container {
@@ -24,6 +30,14 @@ article {
   margin: 0 auto;
 }
 
+#log_text {
+  height: 20vh;
+  overflow-y: auto;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 97%, rgba(0,0,0,0.05) 100%);
+}
+
+/*TEXT*/
+
 h1,h2,h3,h4,h5,h6 {
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.1em;
@@ -32,8 +46,45 @@ h1,h2,h3,h4,h5,h6 {
 
 p {}
 
+/* ELEMENTS*/
+
 header {
   padding: 0.1em 1em;
   background-color: #232323;
   color: #efefef;
+}
+
+.button {
+  color: #ffffff;
+  background-color: #232323;
+  padding: 0.4em 1em;
+  margin: 0 0 1em 0;
+  display: inline-block;
+}
+
+.log {
+  color: #454545;
+  border-top: 1px solid #dedede;
+  padding: 0.3em 0;
+}
+
+.log:first-of-type {
+  border-top: 0px hidden;
+  padding-top: 1em;
+}
+
+.log:last-of-type {
+  padding-bottom: 1em;
+}
+
+/* ANIMATION */
+
+.fadeup {
+  animation: fadeup 0.5s ease-out;
+}
+
+@keyframes fadeup {
+    0% { opacity: 0; transform: scaleY(0%););}
+    31% { opacity: 0; transform: translateY(0.5em);}
+    100%   { opacity: 1; transform: translateY(0);}
 }
