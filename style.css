@@ -1,20 +1,20 @@
 body {
-  background-color: #efefef;
+  background-color: #dedede;
+  color: #232323;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Zilla Slab', sans-serif;
 }
 
-footer {
-  position: fixed;
-  width: 100%;
-  height: 3em;
-  top:  calc(100vh - 3em);
+article, header {
+  margin: 0 0 1em 0;
+  box-shadow: 0 0.2em 1em 0 rgba(0,0,0,0.33);
 }
 
-footer progress {
-  width: 100%;
-  height: 1em;
-  margin: 1em 0;
+article {
+  background-color: #efefef;
+  padding: 1em;
+  border-top: 0.4em solid #232323;
+  border-bottom: 0.4em solid #232323;
 }
 
 .container {
@@ -24,9 +24,16 @@ footer progress {
   margin: 0 auto;
 }
 
-h1 {
-  padding: 0.2em 0.5em;
-  font-size: 2em;
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.5em 0;
+}
+
+p {}
+
+header {
+  padding: 0.1em 1em;
   background-color: #232323;
   color: #efefef;
 }
