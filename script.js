@@ -1,6 +1,6 @@
 window.onload = function () {
   addLog("Loaded!");
-  home = new map_location("home","your house","This is your house",[{label:"Go outside", move: "garden"}]);
+  home = new map_location("home","your house","This is your house",[{label:"Go outside", move: "garden"}],"You can move by clicking the navigation buttons.");
   garden = new map_location("garden","your garden","Just outside your house",[{label:"Go inside", move: "home"},{label:"Open fence", move: "garden"}]);
   console.log(map);
   player = new actor("player","home");
@@ -18,7 +18,11 @@ function drawLocation() {
   map[player.position].actions.forEach((item, i) => {
     document.getElementById('cont_nav').innerHTML += "<div class='button' onclick=goTo('" + item.move + "')>" + item.label + "</div>"
   });
-
+  if (map[player.position].hint) {
+    document.getElementById('cont_hint').innerHTML = map[player.position].hint;
+  } else {
+    document.getElementById('cont_hint').innerHTML = "";
+  }
 }
 
 function goTo(map_location) {

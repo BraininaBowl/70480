@@ -9,10 +9,13 @@ function actor(name,position) {
   actors.push(this);
 }
 
-function map_location(id,name,description,actions){
+function map_location(id,name,description,actions,hint){
   this.name = name;
   this.description = description;
   this.actions = actions;
+  if (hint) {
+    this.hint = hint;
+  }
   map[id]=this;
 }
 

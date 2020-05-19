@@ -30,10 +30,18 @@ section{
   margin: 0 auto;
 }
 
+#art_cont {
+  height: 60vh;
+}
+
+#art_log {
+  height: calc(40vh - 9em);
+}
+
 #log_text {
-  height: 20vh;
   overflow-y: auto;
   background-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 97%, rgba(0,0,0,0.05) 100%);
+  height: calc(40vh - 16em)
 }
 
 /*TEXT*/
@@ -47,6 +55,11 @@ h1,h2,h3,h4,h5,h6 {
 p {}
 
 .log .date {
+  font-style: italic;
+  font-size: 0.8em;
+}
+
+#cont_hint {
   font-style: italic;
   font-size: 0.8em;
 }
@@ -66,6 +79,7 @@ header {
   margin: 0 1em 1em 0;
   display: inline-block;
   transition: all 0.1s ease-in-out;
+  font-size: 1em;
 }
 
 .log {
