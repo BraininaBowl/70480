@@ -8,8 +8,10 @@ body {
 }
 
 article, header {
-  margin: 0 0 1em 0;
+  margin: 0 0.5em 1em 0.5em;
   box-shadow: 0 0.2em 1em 0 rgba(0,0,0,0.33);
+  float: left;
+  position: relative;
 }
 
 article {
@@ -17,6 +19,14 @@ article {
   padding: 1em 1em 0 1em;
   border-top: 0.4em solid #232323;
   border-bottom: 0.4em solid #232323;
+}
+
+.w100 {
+  width: calc(100% - 3em);
+}
+
+.w50 {
+  width: calc(50% - 3em);
 }
 
 section{
@@ -34,14 +44,14 @@ section{
   height: 60vh;
 }
 
-#art_log {
+#art_log, #art_inv {
   height: calc(40vh - 9em);
 }
 
-#log_text {
+#log_text, #inv_text {
   overflow-y: auto;
   background-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 97%, rgba(0,0,0,0.05) 100%);
-  height: calc(40vh - 16em)
+  height: calc(40vh - 13em)
 }
 
 /*TEXT*/
@@ -54,7 +64,7 @@ h1,h2,h3,h4,h5,h6 {
 
 p {}
 
-.log .date {
+.list .sub {
   font-style: italic;
   font-size: 0.8em;
 }
@@ -82,18 +92,18 @@ header {
   font-size: 1em;
 }
 
-.log {
+.list {
   color: #454545;
   border-top: 1px solid #dedede;
   padding: 0.3em 0;
 }
 
-.log:first-of-type {
+.list:first-of-type {
   border-top: 0px hidden;
   padding-top: 1em;
 }
 
-.log:last-of-type {
+.list:last-of-type {
   padding-bottom: 1em;
 }
 

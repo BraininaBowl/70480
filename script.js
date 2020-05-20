@@ -1,13 +1,14 @@
 window.onload = function () {
   addLog("Loaded!");
-  home = new map_location("home","your house","This is your house",[{label:"Go outside", move: "garden"}],"You can move by clicking the navigation buttons.");
-  garden = new map_location("garden","your garden","Just outside your house",[{label:"Go inside", move: "home"},{label:"Open fence", move: "garden"}]);
+  home = new map_location("home","your house","This is your house.",[{label:"Go outside", move: "garden"}],"You can move by clicking the navigation buttons.");
+  garden = new map_location("garden","your garden","Just outside your house.",[{label:"Go inside", move: "home"},{label:"Open fence", move: "garden"}]);
   console.log(map);
   player = new actor("player","home");
   player.addItem("Voorwerp","Dit is het!",1);
 
 
   drawLocation()
+  drawInventory()
 }
 
 
@@ -16,7 +17,7 @@ function drawLocation() {
   document.getElementById('cont_text').innerHTML = map[player.position].description;
   document.getElementById('cont_nav').innerHTML = "";
   map[player.position].actions.forEach((item, i) => {
-    document.getElementById('cont_nav').innerHTML += "<div class='button' onclick=goTo('" + item.move + "')>" + item.label + "</div>"
+    document.getElementById('cont_nav').innerHTML += "<div class='button' onclick=perform('" + item.move + "')>" + item.label + "</div>"
   });
   if (map[player.position].hint) {
     document.getElementById('cont_hint').innerHTML = map[player.position].hint;
@@ -25,7 +26,7 @@ function drawLocation() {
   }
 }
 
-function goTo(map_location) {
+function perform(map_location) {
   player.position = map_location;
   addLog("Entered " + map[player.position].name);
   drawLocation();
@@ -40,26 +41,30 @@ function goTo(map_location) {
 
 
 // helpers
-
-
+function drawInventory(){
+  document.getElementById('inv_text').innerHTML = ""
+  player.inventory.forEach((item, i) => {
+    document.getElementById('inv_text').innerHTML += "<div class='list'>" + item.name + " <span class='sub'>" + item.description + "</div>";
+  });
+}
 
 function addLog(text) {
-  //is the log scrolled all the way down?
-  var el = document.getElementById("log_text");
-  var scroll = el.scrollHeight - el.scrollTop - el.clientHeight < 1
-
   //remove past animations
   var animatedlogs = document.getElementsByClassName('log fadeup');
   while(animatedlogs.length > 0){
       animatedlogs[0].classList.remove('fadeup');
   }
 
+  //is the log scrolled all the way down?
+  var el = document.getElementById("log_text");
+  var scroll = el.scrollHeight - el.scrollTop - el.clientHeight < 1
+
   // get Date
   var date = new Date();
   var fomatteddate = date.toLocaleString('en-uk',{month: 'long'}) + " " + suffix(date.getDate()) + " " + date.getFullYear() + " - " + date.getHours() + ":" + (date.getMinutes()<10?'0':'') + date.getMinutes();
   //var formatteddate = date.toLocaleString('en-uk');
   //write to log
-  document.getElementById('log_text').innerHTML += "<div class='log fadeup'><span class='date'>" + fomatteddate + "</span>: " + text + "</div>";
+  document.getElementById('log_text').innerHTML += "<div class='list fadeup'><span class='sub'>" + fomatteddate + "</span>: " + text + "</div>";
 
   //scrool down if needed
   if (scroll) {
