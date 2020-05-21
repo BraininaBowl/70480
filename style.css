@@ -74,6 +74,11 @@ p {}
   font-size: 0.8em;
 }
 
+.list .amount {
+  font-weight: bold;
+  float: right;
+}
+
 /* ELEMENTS*/
 
 header {
@@ -96,6 +101,14 @@ header {
   color: #454545;
   border-top: 1px solid #dedede;
   padding: 0.3em 0;
+}
+
+.sentence span {
+  display: inline-block;
+}
+
+.sentence span::first-letter {
+  text-transform: capitalize;
 }
 
 .list:first-of-type {

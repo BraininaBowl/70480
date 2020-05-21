@@ -19,13 +19,10 @@ function map_location(id,name,description,actions,hint){
     this.hint = hint;
   }
   this.addItem = addItem;
-  this.update = function() {
-    this.tempactions = {};
-  }
   map[id]=this;
 }
 
-function addItem(name,description,amount,position){
+function addItem(name,description,amount,position,grabable){
   var itemIndex
   if (this.inventory.some(function(item,i){
     if (item.name == name){
@@ -41,7 +38,10 @@ function addItem(name,description,amount,position){
       amount: amount
     });
     if (position){
-      this.inventory.push({position: position})
+      this.inventory[this.inventory.length-1].position = position;
+    }
+    if (grabable){
+      this.inventory[this.inventory.length-1].grabable = grabable;
     }
   }
 }
