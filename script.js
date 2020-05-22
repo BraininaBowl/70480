@@ -17,6 +17,7 @@ window.onload = function () {
 function drawLocation() {
   document.getElementById('cont_head').innerHTML = map[player.position].name;
   document.getElementById('cont_text').innerHTML = "<span>" + map[player.position].description + "</span> ";
+  // clear tempactions
   map[player.position].tempactions.splice(0, map[player.position].tempactions.length)
   map[player.position].inventory.forEach((item, i) => {
     if (item.amount > 0 ) {
