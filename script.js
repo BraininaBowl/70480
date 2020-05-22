@@ -18,11 +18,12 @@ function drawLocation() {
   document.getElementById('cont_head').innerHTML = map[player.position].name;
   document.getElementById('cont_text').innerHTML = "<span>" + map[player.position].description + "</span> ";
   // clear tempactions
-  map[player.position].tempactions.splice(0, map[player.position].tempactions.length)
+  if (map[player.position].tempactions.length > 0) {
+    map[player.position].tempactions.splice(0, map[player.position].tempactions.length);
+  }
   map[player.position].inventory.forEach((item, i) => {
     if (item.amount > 0 ) {
-      var sentence = "";
-       sentence += "<span>";
+      var sentence = "<span>";
       if (item.position) {
         sentence += item.position;
       } else {
@@ -30,10 +31,10 @@ function drawLocation() {
       }
       if (item.amount > 30) {
         sentence += " are a lot of ";
-      } else if (item.amount > 10) {
+      } else if (item.amount > 20) {
         sentence += " are some ";
       } else if (item.amount > 1) {
-        sentence += " are " + item.amount + " "
+        sentence += " are " + numtotext(item.amount) + " "
       } else {
         sentence += " is a "
       }
@@ -49,7 +50,7 @@ function drawLocation() {
       if (item.grabable) {
         map[player.position].tempactions.push({
           label:"Take a " + item.name,
-          move: 'function e() {player.addItem(' + item.name + ', ' + item.description + ', 1); map.' + player.position + '.inventory[' + i + '].amount -= 1}'
+          move: 'map.' + player.position + '.inventory[' + i + '].amount -= 1; player.addItem("' + item.name + '", "' + item.description + '", 1); drawLocation();'
         });
       }
     }
@@ -90,6 +91,16 @@ function drawInventory(){
     document.getElementById('inv_text').innerHTML += "<div class='list inv sentence'><span>" + item.name + "</span><span class='amount'>" + item.amount + "</span></div>";
   });
 }
+
+function numtotext(num){
+  var numbers = ["zero","one","two","three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"]
+  if (num <= 20) {
+    return numbers[num];
+  } else {
+    return num;
+  }
+}
+
 
 function addLog(text) {
   //remove past animations
