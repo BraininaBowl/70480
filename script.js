@@ -1,12 +1,12 @@
 window.onload = function () {
   addLog("Loaded!");
   home = new map_location("home","your house","this is your house.",[{label:"Go outside", move: 'goTo("garden")'}],"You can move by clicking the navigation buttons.");
-  home.addItem("seed","grows into a tree",31,"in a jar on the table",true);
+  home.addItem({name:"seed",description:"grows into a tree",amount:31,position:"in a jar on the table",grabable:true});
   garden = new map_location("garden","your garden","just outside your house.",[{label:"Go inside", move: 'goTo("home")'},{label:"Open fence", move: 'goTo("garden")'}]);
   console.log(map);
   player = new actor("player","home");
   player.addItem = playerAddItem;
-  player.addItem("item","this is an item!",1);
+  player.addItem({name:"item",description:"this is an item!",amount:1});
 
 
   drawLocation()
@@ -50,7 +50,7 @@ function drawLocation() {
       if (item.grabable) {
         map[player.position].tempactions.push({
           label:"Take a " + item.name,
-          move: 'map.' + player.position + '.inventory[' + i + '].amount -= 1; player.addItem("' + item.name + '", "' + item.description + '", 1); drawLocation();'
+          move: 'map.' + player.position + '.inventory[' + i + '].amount -= 1; player.addItem({name:"' + item.name + '", description:"' + item.description + '",amount: 1}); drawLocation();'
         });
       }
     }
@@ -70,11 +70,7 @@ function drawLocation() {
   }
 }
 
-function goTo(map_location) {
-  player.position = map_location;
-  addLog("entered " + map[player.position].name);
-  drawLocation();
-}
+
 
 
 
@@ -101,6 +97,11 @@ function numtotext(num){
   }
 }
 
+function goTo(map_location) {
+  player.position = map_location;
+  addLog("entered " + map[player.position].name);
+  drawLocation();
+}
 
 function addLog(text) {
   //remove past animations
@@ -126,36 +127,7 @@ function addLog(text) {
   }
 }
 
-function playerAddItem(name,description,amount) {
-  var itemIndex
-  if (this.inventory.some(function(item,i){
-    if (item.name == name){
-      itemIndex = i;
-      return true;
-    }
-  })) {
-    this.inventory[itemIndex].amount += amount;
-    drawInventory();
-  } else {
-    drawInventory();
-    this.inventory.push({
-      name: name,
-      description: description,
-      amount: amount
-    });
-    //is the log scrolled all the way down?
-    var el = document.getElementById("inv_text");
-    var scroll = el.scrollHeight - el.scrollTop - el.clientHeight < 1;
 
-    //write to log
-    document.getElementById('inv_text').innerHTML += "<div class='list inv fadeup sentence'><span>" + name + "</span><span class='amount'>" + amount + "</span></div>";
-
-    //scrool down if needed
-    if (scroll) {
-      el.scroll({top: el.scrollHeight,behavior: 'smooth'})
-    }
-  }
-}
 
 function suffix(number) {
     var tenths = number % 10,
