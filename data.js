@@ -24,15 +24,11 @@ function map_location(id,name,description,actions,hint){
 
 function addItem(data){
   var itemIndex
-  if (this.inventory.some(function(item,i){
-    if (item.name == data.name){
-      itemIndex = i;
-      return true;
-    }
-  })) {
-    this.inventory[itemIndex].amount += data.amount;
+  if (this.inventory[data.name])
+  {
+    this.inventory[data.name].amount += data.amount;
   } else {
-    this.inventory.push(data);
+    this.inventory[data.name] = data;
   }
 }
 

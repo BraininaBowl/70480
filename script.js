@@ -1,7 +1,8 @@
 window.onload = function () {
   addLog("Loaded!");
   home = new map_location("home","your house","this is your house.",[{label:"Go outside", move: 'goTo("garden")'}],"You can move by clicking the navigation buttons.");
-  home.addItem({name:"seed",description:"grows into a tree",amount:31,position:"in a jar on the table",grabable:true});
+  home.addItem({name:"table",description:"you know, it's a table.",amount:1,position:"in the center of the room",container:"on top off", inventory:[], addItem : addItem});
+  home.inventory.table.addItem({name:"seed",description:"grows into a tree.",amount:31,position:"in a jar on the table",grabable:true});
   garden = new map_location("garden","your garden","just outside your house.",[{label:"Go inside", move: 'goTo("home")'},{label:"Open fence", move: 'goTo("garden")'}]);
   console.log(map);
   player = new actor("player","home");
@@ -15,46 +16,16 @@ window.onload = function () {
 
 
 function drawLocation() {
-  document.getElementById('cont_head').innerHTML = map[player.position].name;
+  document.getElementById('cont_head').innerHTML = "<span>" + map[player.position].name + "</span>";
   document.getElementById('cont_text').innerHTML = "<span>" + map[player.position].description + "</span> ";
   // clear tempactions
   if (map[player.position].tempactions.length > 0) {
     map[player.position].tempactions.splice(0, map[player.position].tempactions.length);
   }
-  map[player.position].inventory.forEach((item, i) => {
-    if (item.amount > 0 ) {
-      var sentence = "<span>";
-      if (item.position) {
-        sentence += item.position;
-      } else {
-        sentence += "there";
-      }
-      if (item.amount > 30) {
-        sentence += " are a lot of ";
-      } else if (item.amount > 20) {
-        sentence += " are some ";
-      } else if (item.amount > 1) {
-        sentence += " are " + numtotext(item.amount) + " "
-      } else {
-        sentence += " is a "
-      }
-      sentence += item.name
-      if (item.amount > 1) {
-        sentence += "s."
-      } else {
-        sentence += "."
-      }
-      sentence += "</span> "
-      document.getElementById('cont_text').innerHTML += sentence;
 
-      if (item.grabable) {
-        map[player.position].tempactions.push({
-          label:"Take a " + item.name,
-          move: 'map.' + player.position + '.inventory[' + i + '].amount -= 1; player.addItem({name:"' + item.name + '", description:"' + item.description + '",amount: 1}); drawLocation();'
-        });
-      }
-    }
-  });
+  //map[player.position].inventory.map(drawItem(currentValue));
+  map[player.position].inventory.every(drawItem);
+
 
   document.getElementById('cont_nav').innerHTML = "";
   map[player.position].actions.forEach((item, i) => {
@@ -70,7 +41,41 @@ function drawLocation() {
   }
 }
 
+function drawItem(element){
+  console.log("value ", element);
+  if (item.amount > 0 ) {
+    var sentence = "<span>";
+    if (item.position) {
+      sentence += item.position;
+    } else {
+      sentence += "there";
+    }
+    if (item.amount > 30) {
+      sentence += " are a lot of ";
+    } else if (item.amount > 20) {
+      sentence += " are some ";
+    } else if (item.amount > 1) {
+      sentence += " are " + numtotext(item.amount) + " "
+    } else {
+      sentence += " is a "
+    }
+    sentence += item.name
+    if (item.amount > 1) {
+      sentence += "s."
+    } else {
+      sentence += "."
+    }
+    sentence += "</span> "
+    document.getElementById('cont_text').innerHTML += sentence;
 
+    if (item.grabable) {
+      map[player.position].tempactions.push({
+        label:"Take a " + item.name,
+        move: 'map.' + player.position + '.inventory[' + i + '].amount -= 1; player.addItem({name:"' + item.name + '", description:"' + item.description + '",amount: 1}); drawLocation();'
+      });
+    }
+  }
+}
 
 
 
