@@ -127,11 +127,22 @@ header {
   animation: fadeup 0.5s ease-out;
 }
 
+.pulse {
+  animation: pulse 0.5s ease-out;
+}
+
 @keyframes fadeup {
-    0% { opacity: 0; transform: scaleY(0%););}
+    0% { opacity: 0; transform: scaleY(0);}
     31% { opacity: 0; transform: translateY(0.5em);}
     100%   { opacity: 1; transform: translateY(0);}
 }
+
+@keyframes pulse {
+    0% { transform: scaleY(1);}
+    31% { transform: scaleY(1.1);}
+    100%   { transform: scaleY(1);}
+}
+
 
 .button:hover {
   box-shadow: 0 0.2em 1em 0 rgba(0,0,0,0.33);

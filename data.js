@@ -9,23 +9,23 @@ function actor(name,position) {
   actors.push(this);
 }
 
-function map_location(id,name,description,actions,hint){
-  this.name = name;
-  this.description = description;
-  this.actions = actions;
+function map_location(data){
+  for (k of Object.keys(data)){this[k] = data[k]}
+  this.name = data.name;
+  this.description = data.description;
+  this.actions = data.actions;
   this.tempactions = new Array;
   this.inventory = new Array;
-  if (hint) {
-    this.hint = hint;
+  if (data.hint) {
+    this.hint = data.hint;
   }
   this.addItem = addItem;
-  map[id]=this;
+  map[data.id]=this;
 }
 
 function addItem(data){
   var itemIndex
-  if (this.inventory[data.name])
-  {
+  if (this.inventory[data.name]) {
     this.inventory[data.name].amount += data.amount;
   } else {
     this.inventory[data.name] = data;
@@ -33,26 +33,19 @@ function addItem(data){
 }
 
 function playerAddItem(data) {
-  var itemIndex
-  if (this.inventory.some(function(item,i){
-    if (item.name == data.name){
-      itemIndex = i;
-      return true;
-    }
-  })) {
-    this.inventory[itemIndex].amount += data.amount;
-    drawInventory();
+  console.log(player.inventory);
+  if (this.inventory[data.name]) {
+    this.inventory[data.name].amount = Number(this.inventory[data.name].amount) + Number(data.amount);
+    drawInventory(data.name, "pulse");
   } else {
-    drawInventory();
-    this.inventory.push(data);
     //is the inventory scrolled all the way down?
     var el = document.getElementById("inv_text");
     var scroll = el.scrollHeight - el.scrollTop - el.clientHeight < 1;
 
-    //write to inventory
-    document.getElementById('inv_text').innerHTML += "<div class='list inv fadeup sentence'><span>" + data.name + "</span><span class='amount'>" + data.amount + "</span></div>";
+    this.inventory[data.name] = data;
+    drawInventory(data.name,"fadeup");
 
-    //scrool down if needed
+        //scrool down if needed
     if (scroll) {
       el.scroll({top: el.scrollHeight,behavior: 'smooth'})
     }

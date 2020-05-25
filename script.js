@@ -1,10 +1,11 @@
 window.onload = function () {
   addLog("Loaded!");
-  home = new map_location("home","your house","this is your house.",[{label:"Go outside", move: 'goTo("garden")'}],"You can move by clicking the navigation buttons.");
-  home.addItem({name:"table",description:"you know, it's a table.",amount:1,position:"in the center of the room",container:"on top off", inventory:[], addItem : addItem});
-  home.inventory.table.addItem({name:"seed",description:"grows into a tree.",amount:31,position:"in a jar on the table",grabable:true});
-  garden = new map_location("garden","your garden","just outside your house.",[{label:"Go inside", move: 'goTo("home")'},{label:"Open fence", move: 'goTo("garden")'}]);
-  console.log(map);
+  home = new map_location({id:"home",name:"your house",description:"this is your house.",actions:[{label:"Go outside", move: 'goTo("garden")'}],hint:"You can move by clicking the navigation buttons.", container: "in here"});
+  home.addItem({name:"table", description:"you know, it's a table.", amount:1, needverb: true, container:".</span> <span>on top of the table", inventory:{}, addItem : addItem});
+  home.inventory.table.addItem({name:"jar", description:"can contain things.", amount:1, needverb: true, grabable:true, container:" containing", inventory:{}, addItem : addItem});
+  home.inventory.table.inventory.jar.addItem({name:"seed", description:"grows into a tree.", amount:31, position:"", grabable:true});
+  garden = new map_location({id:"garden", name:"your garden",description:"just outside your house.",actions:[{label:"Go inside", move: 'goTo("home")'},{label:"Open fence", move: 'goTo("garden")'}]});
+  //console.log(map);
   player = new actor("player","home");
   player.addItem = playerAddItem;
   player.addItem({name:"item",description:"this is an item!",amount:1});
@@ -23,9 +24,7 @@ function drawLocation() {
     map[player.position].tempactions.splice(0, map[player.position].tempactions.length);
   }
 
-  //map[player.position].inventory.map(drawItem(currentValue));
-  map[player.position].inventory.every(drawItem);
-
+  for (k of Object.keys(map[player.position].inventory)){drawRootItem(map[player.position].inventory[k])}
 
   document.getElementById('cont_nav').innerHTML = "";
   map[player.position].actions.forEach((item, i) => {
@@ -41,40 +40,71 @@ function drawLocation() {
   }
 }
 
-function drawItem(element){
-  console.log("value ", element);
+function drawRootItem(item){
   if (item.amount > 0 ) {
-    var sentence = "<span>";
-    if (item.position) {
-      sentence += item.position;
-    } else {
-      sentence += "there";
-    }
-    if (item.amount > 30) {
-      sentence += " are a lot of ";
-    } else if (item.amount > 20) {
-      sentence += " are some ";
-    } else if (item.amount > 1) {
-      sentence += " are " + numtotext(item.amount) + " "
-    } else {
-      sentence += " is a "
-    }
-    sentence += item.name
-    if (item.amount > 1) {
-      sentence += "s."
-    } else {
-      sentence += "."
-    }
+    var sentence = "<span>" + map[player.position].container
+    sentence += drawItem(item)
     sentence += "</span> "
     document.getElementById('cont_text').innerHTML += sentence;
+  }
+}
 
-    if (item.grabable) {
-      map[player.position].tempactions.push({
-        label:"Take a " + item.name,
-        move: 'map.' + player.position + '.inventory[' + i + '].amount -= 1; player.addItem({name:"' + item.name + '", description:"' + item.description + '",amount: 1}); drawLocation();'
-      });
+function drawItem(item){
+  if (item.grabable) {
+    var label = "Take the " + item.name
+    if (item.amount > 1)  {
+      label += "s"
+    }
+    var data = "{"
+    for (k of Object.keys(item)){data += k + ': "' + item[k] + '",';}
+    data += "}"
+
+    map[player.position].tempactions.push({
+      label: label,
+      move: 'player.addItem(' + data + '); drawLocation();'
+    });
+  }
+
+  sentence = ""
+  if (item.position) {
+    sentence += item.position;
+  }
+  if (item.needverb) {
+    if (item.amount > 1) {
+      sentence += " are"
+    } else {
+      sentence += " is"
     }
   }
+  if (item.amount > 30) {
+    sentence += " a lot of";
+  } else if (item.amount > 20) {
+    sentence += " some";
+  } else if (item.amount > 1) {
+    sentence += " " + numtotext(item.amount)
+  } else {
+    sentence += " a"
+  }
+  if (item.inventory && Object.keys(item.inventory).length == 0) {
+    if (item.amount == 1) {
+      sentence += "n"
+    }
+    sentence += " empty "
+  } else {
+    sentence += " "
+  }
+  sentence += item.name
+  if (item.amount > 1) {
+    sentence += "s "
+  } else {
+    sentence += ""
+  }
+  if (item.inventory && Object.keys(item.inventory).length > 0) {
+    sentence += item.container;
+    for (k of Object.keys(item.inventory)){sentence += drawItem(item.inventory[k])}
+  }
+  return sentence
+
 }
 
 
@@ -86,11 +116,15 @@ function drawItem(element){
 
 
 // helpers
-function drawInventory(){
+function drawInventory(newItem,anim){
   document.getElementById('inv_text').innerHTML = ""
-  player.inventory.forEach((item, i) => {
-    document.getElementById('inv_text').innerHTML += "<div class='list inv sentence'><span>" + item.name + "</span><span class='amount'>" + item.amount + "</span></div>";
-  });
+  for (k of Object.keys(player.inventory)){
+    var newClass
+    if (player.inventory[k].name == newItem) {
+      newClass = anim
+    }
+    document.getElementById('inv_text').innerHTML += "<div class='list inv sentence " + newClass + "'><span>" + player.inventory[k].name + "</span><span class='amount'>" + player.inventory[k].amount + "</span></div>"
+  }
 }
 
 function numtotext(num){
