@@ -6,44 +6,56 @@ function actor(name,position) {
   this.inventory = new Array;
   this.position = position;
   this.addItem = addItem;
+  this.removeItem = removeItem;
   actors.push(this);
 }
 
 function map_location(data){
-  for (k of Object.keys(data)){this[k] = data[k]}
   this.name = data.name;
-  this.description = data.description;
-  this.actions = data.actions;
+  for (k of Object.keys(data)){this[k] = data[k]}
   this.tempactions = new Array;
   this.inventory = new Array;
-  if (data.hint) {
-    this.hint = data.hint;
-  }
   this.addItem = addItem;
+  this.removeItem = removeItem;
   map[data.id]=this;
+}
+
+function removeItem(id,amount) {
+  if (!amount) {
+    amount = "all"
+  }
+  if (amount != "all") {
+    this.inventory[id].amount -= amount;
+  }
+  if (amount == "all" || this.inventory[id].amount <= 0) {
+    delete this.inventory[id];
+  }
 }
 
 function addItem(data){
   var itemIndex
-  if (this.inventory[data.name]) {
-    this.inventory[data.name].amount += data.amount;
+  if (this.inventory[data.id]) {
+    this.inventory[data.id].amount += data.amount;
   } else {
-    this.inventory[data.name] = data;
+    this.inventory[data.id] = data;
+  }
+  if (data.inventory) {
+    this.inventory[data.id].addItem = addItem;
+    this.inventory[data.id].removeItem = removeItem;
   }
 }
 
 function playerAddItem(data) {
-  console.log(player.inventory);
-  if (this.inventory[data.name]) {
-    this.inventory[data.name].amount = Number(this.inventory[data.name].amount) + Number(data.amount);
-    drawInventory(data.name, "pulse");
+  if (this.inventory[data.id]) {
+    this.inventory[data.id].amount = Number(this.inventory[data.id].amount) + Number(data.amount);
+    drawInventory(data.id, "pulse");
   } else {
     //is the inventory scrolled all the way down?
     var el = document.getElementById("inv_text");
     var scroll = el.scrollHeight - el.scrollTop - el.clientHeight < 1;
 
-    this.inventory[data.name] = data;
-    drawInventory(data.name,"fadeup");
+    this.inventory[data.id] = data;
+    drawInventory(data.id,"fadeup");
 
         //scrool down if needed
     if (scroll) {
