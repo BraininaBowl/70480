@@ -4,6 +4,7 @@ window.onload = function () {
   home.addItem({id: "table", name:"table", description:"you know, it's a table.", amount:1, container:".</span> <span>on top of the table", needverb: true, inventory:{}});
   home.inventory.table.addItem({id: "jar", name:"glass jar", description:"can contain things.", amount:1, grabable:true, container:" containing", inventory:{}});
   home.inventory.table.addItem({id: "pen", name:"pen", description:"useful when writing.", amount:1, grabable:true});
+  home.inventory.table.addItem({id: "apparatus", name:"apparatus", description:"Errr.", amount:1, grabable:true});
   home.inventory.table.inventory.jar.addItem({id: "seed", name:"seed", description:"grows into a tree.", amount:31, position:"", grabable:true});
   garden = new map_location({id:"garden", name:"your garden",description:"just outside your house.",actions:[{label:"Go inside", move: 'goTo("home")'},{label:"Open fence", move: 'goTo("garden")'}]});
   //console.log(map);
@@ -45,16 +46,16 @@ function drawRootItem(item){
   if (item.amount > 0 ) {
     var sentence = "<span>" + map[player.position].container
     var path = 'map.' + player.position
-    sentence += drawItem(item,path)
-    sentence += "</span> "
+    sentence += drawItemEnvironment(item,path)
+    sentence += ".</span> "
     document.getElementById('cont_text').innerHTML += sentence;
   }
 }
 
-function drawItem(item,path){
+function drawItemEnvironment(item,path) {
   if (item.amount > 0 ) {
-
     //Make grabable
+    console.log(item)
     if (item.grabable) {
       var label
       if (item.amount > 1)  {
@@ -71,23 +72,34 @@ function drawItem(item,path){
       });
     }
 
-    sentence = ""
-    // first item in this inventory?
-    console.log(item.name, Object.keys(eval(path + ".inventory"))[0] )
+    var sentence = ""
     if (Object.keys(eval(path + ".inventory"))[0] == item.id) {
       if (item.position) {
           sentence += item.position;
+        ;}
+      if (eval(path + ".needverb")) {
+        if (item.amount > 1 || Object.keys(eval(path + ".inventory")).length > 1) {
+          sentence += " are"
+        } else {
+          sentence += " is"
         }
-    } else {
-      sentence += ", ";
-    }
-    if (eval(path + ".needverb")) {
-      if (item.amount > 1) {
-        sentence += " are"
-      } else {
-        sentence += " is"
       }
+    } else if (Object.keys(eval(path + ".inventory"))[Object.keys(eval(path + ".inventory")).length - 1] == item.id) {
+      // last item in this inventory
+      sentence += ", and";
+    } else {
+      sentence += ",";
     }
+
+    sentence += drawItem(item,path)
+    return sentence
+  }
+}
+
+function drawItem(item,path){
+    var sentence = ""
+    // first item in this inventory?
+
     if (item.amount > 30) {
       sentence += " a lot of";
     } else if (item.amount > 20) {
@@ -96,11 +108,12 @@ function drawItem(item,path){
       sentence += " " + numtotext(item.amount)
     } else {
       sentence += " a"
-    }
-    if (item.inventory && Object.keys(item.inventory).length == 0) {
-      if (item.amount == 1) {
+      vowel = /^[euioa]/;
+      if (vowel.test(item.name.charAt(0)) || (item.amount == 1 && item.inventory && Object.keys(item.inventory).length == 0)) {
         sentence += "n"
       }
+    }
+    if (item.inventory && Object.keys(item.inventory).length == 0) {
       sentence += " empty "
     } else {
       sentence += " "
@@ -114,10 +127,10 @@ function drawItem(item,path){
     if (item.inventory && Object.keys(item.inventory).length > 0) {
       sentence += item.container;
       path += '.inventory.' + item.id
-      for (k of Object.keys(item.inventory)){sentence += drawItem(item.inventory[k],path)}
+      for (k of Object.keys(item.inventory)){sentence += drawItemEnvironment(item.inventory[k],path)}
     }
     return sentence
-  }
+
 }
 
 
@@ -136,7 +149,7 @@ function drawInventory(newItem,anim){
     if (player.inventory[k].id == newItem) {
       newClass = anim
     }
-    document.getElementById('inv_text').innerHTML += "<div class='list inv sentence " + newClass + "'><span>" + player.inventory[k].name + "</span><span class='amount'>" + player.inventory[k].amount + "</span></div>"
+    document.getElementById('inv_text').innerHTML += "<div class='list inv sentence " + newClass + "'><span>" + drawItem(player.inventory[k],"player") + "</span></div>"
   }
 }
 
