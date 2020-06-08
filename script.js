@@ -1,12 +1,13 @@
 window.onload = function () {
   addLog("Loaded!");
-  home = new map_location({id:"home",name:"your house",description:"this is your house.",actions:[{label:"Go outside", move: 'goTo("garden")'}],hint:"You can move by clicking the navigation buttons.", container: "in here", needverb: true});
-  home.addItem({id: "table", name:"table", description:"you know, it's a table.", amount:1, container:".</span> <span>on top of the table", needverb: true, inventory:{}});
+  home = new map_location({id:"home",name:"your house",description:"this is your house",actions:[{label:"Go outside", move: 'goTo("garden")'}],hint:"Try clicking those buttons.", container: "in here", needverb: true});
+  home.addItem({id: "table", name:"table", description:"you know, it's a table.", amount:1, container:"<split />on top of the table", needverb: true, inventory:{}});
+//  home.addItem({id: "chair", name:"chair", description:"you know, it's a chair.", amount:2, container:"<split />on top of the table", needverb: true, inventory:{}});
   home.inventory.table.addItem({id: "jar", name:"glass jar", description:"can contain things.", amount:1, grabable:true, container:" containing", inventory:{}});
   home.inventory.table.addItem({id: "pen", name:"pen", description:"useful when writing.", amount:1, grabable:true});
   home.inventory.table.addItem({id: "apparatus", name:"apparatus", description:"Errr.", amount:1, grabable:true});
   home.inventory.table.inventory.jar.addItem({id: "seed", name:"seed", description:"grows into a tree.", amount:31, position:"", grabable:true});
-  garden = new map_location({id:"garden", name:"your garden",description:"just outside your house.",actions:[{label:"Go inside", move: 'goTo("home")'},{label:"Open fence", move: 'goTo("garden")'}]});
+  garden = new map_location({id:"garden", name:"your garden",description:"just outside your house.",actions:[{label:"Go inside", move: 'goTo("home")'}]});
   //console.log(map);
   player = new actor("player","home");
   player.addItem = playerAddItem;
@@ -19,15 +20,26 @@ window.onload = function () {
 
 
 function drawLocation() {
-  document.getElementById('cont_head').innerHTML = "<span>" + map[player.position].name + "</span>";
-  document.getElementById('cont_text').innerHTML = "<span>" + map[player.position].description + "</span> ";
   // clear tempactions
   if (map[player.position].tempactions.length > 0) {
     map[player.position].tempactions.splice(0, map[player.position].tempactions.length);
   }
 
-  for (k of Object.keys(map[player.position].inventory)){drawRootItem(map[player.position].inventory[k])}
+  let rawParagraph = map[player.position].description + "<split />";
+  let printParagraph = "";
+  // add a sentence for each root object and its contents
+  for (k of Object.keys(map[player.position].inventory)){
+    rawParagraph += drawRootItem(map[player.position].inventory[k]);
+  }
 
+  rawParagraph.split("<split />").forEach(function e(value, index, array) {
+    if (index < array.length-1) {
+      printParagraph += capitalize(value) + ". ";
+    }
+  });
+
+  document.getElementById('cont_head').innerHTML = map[player.position].name;
+  document.getElementById('cont_text').innerHTML = printParagraph ;
   document.getElementById('cont_nav').innerHTML = "";
   map[player.position].actions.forEach((item, i) => {
     document.getElementById('cont_nav').innerHTML += "<div class='button' onclick='" + item.move + "'>" + item.label + "</div>"
@@ -44,18 +56,17 @@ function drawLocation() {
 
 function drawRootItem(item){
   if (item.amount > 0 ) {
-    var sentence = "<span>" + map[player.position].container
+    var sentence = map[player.position].container
     var path = 'map.' + player.position
     sentence += drawItemEnvironment(item,path)
-    sentence += ".</span> "
-    document.getElementById('cont_text').innerHTML += sentence;
+    sentence += "<split />"
+    return sentence;
   }
 }
 
 function drawItemEnvironment(item,path) {
   if (item.amount > 0 ) {
     //Make grabable
-    console.log(item)
     if (item.grabable) {
       var label
       if (item.amount > 1)  {
@@ -130,7 +141,6 @@ function drawItem(item,path){
       for (k of Object.keys(item.inventory)){sentence += drawItemEnvironment(item.inventory[k],path)}
     }
     return sentence
-
 }
 
 
@@ -142,14 +152,20 @@ function drawItem(item,path){
 
 
 // helpers
+
+function capitalize(sentence){
+    return(sentence.substring(0,1).toUpperCase() + sentence.substring(1))
+}
+
 function drawInventory(newItem,anim){
   document.getElementById('inv_text').innerHTML = ""
   for (k of Object.keys(player.inventory)){
-    var newClass
+    var newClass = "";
     if (player.inventory[k].id == newItem) {
       newClass = anim
     }
-    document.getElementById('inv_text').innerHTML += "<div class='list inv sentence " + newClass + "'><span>" + drawItem(player.inventory[k],"player") + "</span></div>"
+    var desc = drawItem(player.inventory[k],"player");
+    document.getElementById('inv_text').innerHTML += "<div class='list inv " + newClass + "'>" + capitalize(desc.trim()) + "</div>"
   }
 }
 

@@ -104,14 +104,6 @@ header {
   padding: 0.3em 0;
 }
 
-.sentence span {
-  display: inline-block;
-}
-
-.sentence span::first-letter {
-  text-transform: capitalize;
-}
-
 .list:first-of-type {
   border-top: 0px hidden;
   padding-top: 1em;
